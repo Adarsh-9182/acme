@@ -152,6 +152,27 @@ class GymnasiumWrapperTest(absltest.TestCase):
     self.assertIsInstance(spec[0], specs.DiscreteArray)
     self.assertIsInstance(spec[1], specs.BoundedArray)
 
+  def test_discrete_space_with_start_offset(self):
+    space = gymnasium.spaces.Discrete(5, start=2)
+    spec = gymnasium_wrapper._convert_to_spec(space)
+
+    # With start != 0, should produce BoundedArray not DiscreteArray.
+    self.assertIsInstance(spec, specs.BoundedArray)
+    self.assertEqual(spec.minimum, 2)
+    self.assertEqual(spec.maximum, 6)
+    spec.validate(np.int64(2))
+    spec.validate(np.int64(6))
+    self.assertRaises(ValueError, spec.validate, np.int64(1))
+    self.assertRaises(ValueError, spec.validate, np.int64(7))
+
+  def test_discrete_space_zero_start(self):
+    space = gymnasium.spaces.Discrete(3)
+    spec = gymnasium_wrapper._convert_to_spec(space)
+
+    # With start == 0 (default), should produce DiscreteArray.
+    self.assertIsInstance(spec, specs.DiscreteArray)
+    self.assertEqual(spec.num_values, 3)
+
   def test_auto_reset_on_step_after_done(self):
     env = gymnasium_wrapper.GymnasiumWrapper(
         gymnasium.make('CartPole-v1'))

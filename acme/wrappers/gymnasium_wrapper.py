@@ -164,6 +164,13 @@ def _convert_to_spec(space: 'gymnasium.Space',
     space.
   """
   if isinstance(space, spaces.Discrete):
+    if space.start != 0:
+      return specs.BoundedArray(
+          shape=(),
+          dtype=space.dtype,
+          minimum=space.start,
+          maximum=space.start + int(space.n) - 1,
+          name=name)
     return specs.DiscreteArray(
         num_values=int(space.n), dtype=space.dtype, name=name)
 
