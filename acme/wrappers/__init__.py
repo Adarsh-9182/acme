@@ -35,6 +35,12 @@ from acme.wrappers.video import VideoWrapper
 
 try:
   # pylint: disable=g-import-not-at-top
+  from acme.wrappers.gymnasium_wrapper import GymnasiumWrapper
+except ImportError:
+  pass
+
+try:
+  # pylint: disable=g-import-not-at-top
   from acme.wrappers.open_spiel_wrapper import OpenSpielWrapper
 except ImportError:
   pass
